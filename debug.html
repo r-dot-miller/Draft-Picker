@@ -1,0 +1,5 @@
+<!doctype html><meta charset=utf-8><title>EP debug</title><pre id=o>loading</pre><script>
+const p=new URLSearchParams(location.search).get('p')||'/players?limit=1';
+const k='sb_publishable_RYfPFixRzWTgqpudMa_oBA_eapVSrAN';
+fetch('https://owccuddpjvtetbnvgqrs.supabase.co/functions/v1/ep-debug?p='+encodeURIComponent(p),{headers:{Authorization:'Bearer '+k,apikey:k}}).then(r=>r.text()).then(t=>o.textContent=t).catch(e=>o.textContent=e);
+</script>
