@@ -43,8 +43,8 @@ async function load(){
   render();
  }catch(e){$('status').className='err';$('status').textContent='Error: '+e.message}
 }
-function age(d){if(!d)return'';const b=new Date(d);return b.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
-function draftYr(d){if(!d)return'';const [y,m,dd]=d.split('-').map(Number);return ` · ${y+18+((m>9||(m===9&&dd>15))?1:0)} draft`}
+function age(d){if(!d||/-00/.test(d))return'2011 (exact date unknown)';const b=new Date(d);return b.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+function draftYr(d){if(!d||/-00/.test(d))return'';const [y,m,dd]=d.split('-').map(Number);return ` · ${y+18+((m>9||(m===9&&dd>15))?1:0)} draft`}
 function render(){
  const q=$('q').value.toLowerCase(),pos=$('pos').value;
  const rows=players.filter(p=>(!pos||p.position===pos)&&(!q||(p.name+' '+(p.city||'')).toLowerCase().includes(q)));
