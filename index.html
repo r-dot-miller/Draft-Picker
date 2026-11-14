@@ -19,14 +19,13 @@
  footer{color:var(--mut);font-size:12px;padding:0 16px 30px;max-width:760px}
 </style></head><body>
 <header><h1>Ontario Draft Watch</h1>
-<div class="sub" id="sub">Ontario-born NHL Draft-eligible prospects, ranked by Elite Prospects profile views</div></header>
+<div class="sub" id="sub">Ontario-born players born in 2011, ranked by Elite Prospects profile views</div></header>
 <div class="controls">
- <select id="year"><option>2027</option><option>2028</option><option>2026</option></select>
- <input id="q" type="search" placeholder="Search name or city">
+  <input id="q" type="search" placeholder="Search name or city">
  <select id="pos"><option value="">All pos</option><option>F</option><option>D</option><option>G</option></select>
 </div>
 <div id="status">Loading…</div><ol id="list"></ol>
-<footer>Order comes from Elite Prospects' profile-view ranking. Exact view counts aren't included in this API plan. Data refreshes daily. Tap a player to open their EP profile.</footer>
+<footer>2011 births are eligible for the 2029 NHL Draft (2030 if born after Sept. 15). Order comes from Elite Prospects' profile-view ranking. Exact view counts aren't included in this API plan. Data refreshes daily. Tap a player to open their EP profile.</footer>
 <script>
 const FN='https://owccuddpjvtetbnvgqrs.supabase.co/functions/v1/ontario-prospects';
 const KEY='sb_publishable_RYfPFixRzWTgqpudMa_oBA_eapVSrAN';
@@ -35,24 +34,25 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 async function load(){
  $('status').className='';$('status').textContent='Loading…';$('list').innerHTML='';
  try{
-  const r=await fetch(`${FN}?year=${$('year').value}`,{headers:{Authorization:'Bearer '+KEY,apikey:KEY}});
+  const r=await fetch(`${FN}?year=2011`,{headers:{Authorization:'Bearer '+KEY,apikey:KEY}});
   const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||r.status);
   players=j.players;const pr=j.progress||{};
   const upd=j.updatedAt?new Date(j.updatedAt).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'—';
-  $('sub').textContent=`${players.length} Ontario-born prospects for the ${j.year} draft · most-viewed first · updated ${upd}`
+  $('sub').textContent=`${players.length} Ontario-born players born in 2011 · most-viewed first · updated ${upd}`
    +(pr.total&&pr.done<pr.total?` · still collecting (${Math.round(pr.done/pr.total*100)}% done, refresh in a few minutes)`:'');
   render();
  }catch(e){$('status').className='err';$('status').textContent='Error: '+e.message}
 }
 function age(d){if(!d)return'';const b=new Date(d);return b.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+function draftYr(d){if(!d)return'';const [y,m,dd]=d.split('-').map(Number);return ` · ${y+18+((m>9||(m===9&&dd>15))?1:0)} draft`}
 function render(){
  const q=$('q').value.toLowerCase(),pos=$('pos').value;
  const rows=players.filter(p=>(!pos||p.position===pos)&&(!q||(p.name+' '+(p.city||'')).toLowerCase().includes(q)));
  $('status').textContent=rows.length?'':'No matches.';
  $('list').innerHTML=rows.map(p=>`<li><a href="${p.url}" target="_blank" rel="noopener">
   <div class="rk">${p.rank}</div><div class="main"><div class="nm">${esc(p.name)}</div>
-  <div class="meta">${esc(p.city||'')}${p.city?' · ':''}Born ${esc(age(p.dob))}</div></div><span class="pos">${esc(p.position)}</span></a></li>`).join('');
+  <div class="meta">${esc(p.city||'')}${p.city?' · ':''}Born ${esc(age(p.dob))}${draftYr(p.dob)}</div></div><span class="pos">${esc(p.position)}</span></a></li>`).join('');
 }
-$('year').onchange=load;$('q').oninput=render;$('pos').onchange=render;
+$('q').oninput=render;$('pos').onchange=render;
 load();
 </script></body></html>
